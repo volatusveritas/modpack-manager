@@ -1,39 +1,39 @@
-from modpackmanager import tui
+import unicurses as curses
+import time
+
+import termui
+from termui import menus
 
 
-main_mng = tui.MenuManager()
+def window_error_test() -> None:
+    manager = menus.MenuManager()
+    main_menu = menus.PlainTextMenu(manager,
+        "main menu",
+        "From the main menu you may hop to other screens"
+    )
+    new_menu = menus.PlainTextMenu(manager,
+        "new modpack",
+        "Create a new modpack"
+    )
+    edit_menu = menus.PlainTextMenu(manager,
+        "edit modpack",
+        "Edit an existing modpack"
+    )
+    del_menu = menus.PlainTextMenu(manager,
+        "delete modpack",
+        "Delete an existing modpack"
+    )
 
-main_menu = tui.OptionsMenu(main_mng)
-new_modpack_menu = tui.OptionsMenu(main_mng)
-view_modpack_menu = tui.OptionsMenu(main_mng)
-edit_modpack_menu = tui.OptionsMenu(main_mng)
-del_modpack_menu = tui.OptionsMenu(main_mng)
+    (main_menu
+        .add_hop("n", "new modpack", new_menu)
+        .add_hop("e", "edit modpack", edit_menu)
+        .add_hop("d", "delete modpack", del_menu)
+    )
 
-main_menu\
-.add_hop(
-    "new", new_modpack_menu, "New modpack", "create a new modpack"
-).add_hop(
-    "view", view_modpack_menu, "View modpack", "explore an existing modpack"
-).add_hop(
-    "edit", edit_modpack_menu, "Edit modpack", "edit an existing modpack"
-).add_hop(
-    "del", del_modpack_menu, "Delete modpack", "delete an existing modpack"
-)
+    for menu in [new_menu, edit_menu, del_menu]:
+        menu.add_hop("b", "back to main menu", main_menu)
 
-new_modpack_menu.add_hop(
-    "back", main_menu, "Menu", "return to the main menu"
-)
+    manager.start(main_menu)
 
-view_modpack_menu.add_hop(
-    "back", main_menu, "Menu", "return to the main menu"
-)
 
-edit_modpack_menu.add_hop(
-    "back", main_menu, "Menu", "return to the main menu"
-)
-
-del_modpack_menu.add_hop(
-    "back", main_menu, "Menu", "return to the main menu"
-)
-
-main_mng.start(main_menu)
+termui.wrap_execute(window_error_test)

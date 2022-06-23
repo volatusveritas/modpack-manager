@@ -1,1 +1,0 @@
-QUERY_SLEEP_TIME: float = 1.25
