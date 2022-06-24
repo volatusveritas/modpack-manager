@@ -6,7 +6,7 @@ def window_error_test() -> None:
     manager = menus.MenuManager()
     main_menu = menus.PlainTextMenu(manager,
         "main menu",
-        "From the main menu you may hop to other screens"
+        "From the main menu you may hop to other menus"
     )
     new_menu = menus.PlainTextMenu(manager,
         "new modpack",
