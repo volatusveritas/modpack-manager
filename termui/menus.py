@@ -55,9 +55,10 @@ class Menu:
         if not self.hops:
             return
 
+        curses.addstr(constants.CONTENT_PADDING*" ")
         curses.addstr("Hops\n", curses.color_pair(termui.SEC_TITLE_COLOR))
         for hop in self.hops:
-            curses.addstr(constants.SUB_PADDING*" " + "[")
+            curses.addstr(constants.CONTENT_PADDING*2*" " + "[")
             curses.addstr(hop, curses.color_pair(termui.SPECIAL_COLOR))
             curses.addstr("] " + self.hops[hop]["description"])
             curses.addch("\n")
@@ -85,7 +86,10 @@ class Menu:
         self.render_content()
         self.render_hops()
         curses.addch("\n")
-        curses.addstr(f"Press [{constants.QUIT_KEY}] to quit")
+        curses.addstr(
+            f"{constants.CONTENT_PADDING*' '}"
+            f"Press [{constants.QUIT_KEY}] to quit"
+        )
 
         self.handle_input()
 
@@ -145,6 +149,7 @@ class ScrollingTextMenu(Menu):
         self.render_lines()
         curses.addch("\n")
         curses.addstr(
+            f"{constants.CONTENT_PADDING*' '}"
             f"Press [{constants.SCROLL_DOWN_KEY}] "
             f"or [{constants.SCROLL_UP_KEY}] to go up or down, respectively\n"
         )
