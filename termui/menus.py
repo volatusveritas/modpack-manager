@@ -80,14 +80,12 @@ class Menu:
     def display(self) -> None:
         curses.clear()
 
-        curses.addch("\n")
         self.render_title()
         curses.addch("\n")
         self.render_content()
         self.render_hops()
         curses.addch("\n")
         curses.addstr(f"Press [{constants.QUIT_KEY}] to quit")
-        curses.addch("\n")
 
         self.handle_input()
 
