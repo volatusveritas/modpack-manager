@@ -116,6 +116,8 @@ class ScrollingTextMenu(Menu):
         ]:
             curses.addstr(constants.CONTENT_PADDING*" " + line)
             curses.addch("\n")
+        for _ in range(constants.SCROLLING_TEXT_SIZE - len(self.lines)):
+            curses.addch("\n")
         curses.refresh()
 
     def scroll_up(self, by: int = 1) -> None:
