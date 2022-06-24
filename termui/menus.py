@@ -124,7 +124,9 @@ class ScrollingTextMenu(Menu):
 
     def scroll_down(self, by: int = 1) -> None:
         self.offset = min(
-            len(self.lines) - constants.SCROLLING_TEXT_SIZE, self.offset + by
+            max(constants.SCROLLING_TEXT_SIZE, len(self.lines))
+            - constants.SCROLLING_TEXT_SIZE,
+            self.offset + by
         )
         self.render_lines()
 
