@@ -16,27 +16,23 @@ def window_error_test() -> None:
         "edit modpack",
         "Edit an existing modpack"
     )
+    view_menu = menus.PlainTextMenu(manager,
+        "view modpack",
+        "View the contents of an existing modpack"
+    )
     del_menu = menus.PlainTextMenu(manager,
         "delete modpack",
         "Delete an existing modpack"
-    )
-    lyrics_menu = menus.ScrollingTextMenu(manager,
-        "lyrics",
-        [
-            "Eu vou rimando e você tem que responder",
-            "eu vou chupar a sua pica mano, e cê nem vai vê",
-            "mano aqui é só improviso o que que você vai fazer",
-        ]
     )
 
     (main_menu
         .add_hop("n", "new modpack", new_menu)
         .add_hop("e", "edit modpack", edit_menu)
+        .add_hop("v", "view modpack", view_menu)
         .add_hop("d", "delete modpack", del_menu)
-        .add_hop("l", "lyrics", lyrics_menu)
     )
 
-    for menu in [new_menu, edit_menu, del_menu, lyrics_menu]:
+    for menu in [new_menu, edit_menu, view_menu, del_menu]:
         menu.add_hop("b", "back to main menu", main_menu)
 
     manager.start(main_menu)
