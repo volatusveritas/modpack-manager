@@ -1,6 +1,8 @@
 import termui
 from termui import menus
 
+import filehandling
+
 
 def window_error_test() -> None:
     manager = menus.MenuManager()
@@ -38,4 +40,7 @@ def window_error_test() -> None:
     manager.start(main_menu)
 
 
-termui.wrap_execute(window_error_test)
+try:
+    termui.wrap_execute(window_error_test)
+finally:
+    filehandling.clean_exiting()
