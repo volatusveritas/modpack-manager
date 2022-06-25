@@ -95,7 +95,9 @@ class Menu:
 
 
 class PlainTextMenu(Menu):
-    def __init__(self, manager: MenuManager, title: str, text: str) -> None:
+    def __init__(
+        self, manager: MenuManager, title: str, text: str = ""
+    ) -> None:
         super().__init__(manager, title)
         self.text = text
 
@@ -154,3 +156,27 @@ class ScrollingTextMenu(Menu):
             f"or [{constants.SCROLL_UP_KEY}] to go up or down, respectively\n"
         )
         curses.addch("\n")
+
+
+class OptionsMenu(Menu):
+    def __init__(
+        self, manager: MenuManager, title: str, options: dict = {}
+    ) -> None:
+        super().__init__(manager, title)
+        self.options = options
+
+    def render_content(self) -> None:
+        for option in self.options:
+            curses.addstr(f"{constants.CONTENT_PADDING*' '}")
+            curses.addch("[")
+            curses.addstr(option, curses.color_pair(termui.SPECIAL_COLOR))
+            curses.addch("]")
+            curses.addstr(f" {self.options[option]['description']}\n")
+
+        curses.addch("\n")
+
+    def extra_input(self, key: str) -> bool:
+        if key in self.options:
+            self.options[key]["target"]()
+
+        return True

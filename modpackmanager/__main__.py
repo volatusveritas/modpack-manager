@@ -4,7 +4,7 @@ from termui import menus
 import filehandling
 
 
-def window_error_test() -> None:
+def mainfunc() -> None:
     manager = menus.MenuManager()
     main_menu = menus.PlainTextMenu(manager,
         "main menu",
@@ -41,6 +41,6 @@ def window_error_test() -> None:
 
 
 try:
-    termui.wrap_execute(window_error_test)
+    termui.wrap_execute(mainfunc)
 finally:
     filehandling.clean_exiting()
