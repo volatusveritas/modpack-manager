@@ -6,6 +6,7 @@ import unicurses as curses
 WIN_TITLE_COLOR = 1
 SEC_TITLE_COLOR = 2
 SPECIAL_COLOR = 3
+STANDOUT_COLOR = 4
 
 stdscr: c_void_p
 
@@ -14,6 +15,7 @@ def _set_color_pairs() -> None:
     curses.init_pair(1, curses.COLOR_GREEN, curses.COLOR_BLACK)
     curses.init_pair(2, curses.COLOR_YELLOW, curses.COLOR_BLACK)
     curses.init_pair(3, curses.COLOR_CYAN, curses.COLOR_BLACK)
+    curses.init_pair(4, curses.COLOR_BLUE, curses.COLOR_BLACK)
 
 
 def _initialize() -> None:
@@ -44,3 +46,22 @@ def wrap_execute(mainfunc: Callable[..., None]) -> None:
     except Exception as e:
         _finalize()
         raise e
+
+
+def newline() -> None:
+    curses.addch("\n")
+
+
+def input(text: str = "") -> str:
+    curses.echo()
+    curses.nocbreak()
+    curses.curs_set(True)
+
+    curses.addstr(text)
+    input: str = curses.getstr()
+
+    curses.noecho()
+    curses.cbreak()
+    curses.curs_set(False)
+
+    return input
