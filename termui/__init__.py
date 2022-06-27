@@ -7,6 +7,7 @@ WIN_TITLE_COLOR = 1
 SEC_TITLE_COLOR = 2
 SPECIAL_COLOR = 3
 STANDOUT_COLOR = 4
+STANDOUT2_COLOR = 5
 
 stdscr: c_void_p
 
@@ -16,6 +17,7 @@ def _set_color_pairs() -> None:
     curses.init_pair(2, curses.COLOR_YELLOW, curses.COLOR_BLACK)
     curses.init_pair(3, curses.COLOR_CYAN, curses.COLOR_BLACK)
     curses.init_pair(4, curses.COLOR_BLUE, curses.COLOR_BLACK)
+    curses.init_pair(5, curses.COLOR_MAGENTA, curses.COLOR_BLACK)
 
 
 def _initialize() -> None:

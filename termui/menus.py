@@ -217,7 +217,7 @@ class InputsMenu(Menu):
         self.answers: list[str] = []
 
     def render_content(self) -> None:
-        for input in self.input_queries:
+        for idx, input in list(enumerate(self.input_queries)):
             curses.addstr(
                 f"{constants.CONTENT_PADDING*' '}"
                 f"{input} "
@@ -230,7 +230,10 @@ class InputsMenu(Menu):
             self.input_positions.append(curses.getyx(termui.stdscr))
             curses.addstr(
                 constants.UNPROMPTED_INDICATOR,
-                curses.color_pair(termui.STANDOUT_COLOR)
+                curses.color_pair(
+                    termui.STANDOUT2_COLOR if idx == self.next_input
+                    else termui.STANDOUT_COLOR
+                )
             )
             termui.newline()
 
@@ -254,5 +257,11 @@ class InputsMenu(Menu):
 
             if self.next_input == len(self.input_queries):
                 self.do_when_filled(self.answers)
+            else:
+                curses.move(*self.input_positions[self.next_input])
+                curses.addstr(
+                    constants.UNPROMPTED_INDICATOR,
+                    curses.color_pair(termui.STANDOUT2_COLOR)
+                )
 
         return True
