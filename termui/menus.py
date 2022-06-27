@@ -56,13 +56,13 @@ class Menu:
 
         return self
 
-    def render_title(self) -> None:
+    def _render_title(self) -> None:
         curses.addstr(self.title, curses.color_pair(termui.WIN_TITLE_COLOR))
         termui.newline()
 
-    def render_content(self) -> None: ...
+    def _render_content(self) -> None: ...
 
-    def render_hops(self) -> None:
+    def _render_hops(self) -> None:
         if not self.hops:
             return
 
@@ -74,35 +74,38 @@ class Menu:
             curses.addstr("] " + self.hops[hop].description)
             termui.newline()
 
-    def extra_input(self, key: str) -> bool: return True
+    def _cleanup(self) -> None: ...
 
-    def handle_input(self) -> None:
+    def _extra_input(self, key: str) -> bool: return True
+
+    def _handle_input(self) -> None:
         while True:
             key = curses.getkey().decode("utf8")
 
             if key == constants.QUIT_KEY:
                 break
             elif key in self.hops:
+                self._cleanup()
                 self.manager.queue_menu(self.hops[key].target)
                 break
             else:
-                if not self.extra_input(key):
+                if not self._extra_input(key):
                     break
 
     def display(self) -> None:
         curses.clear()
 
-        self.render_title()
+        self._render_title()
         termui.newline()
-        self.render_content()
-        self.render_hops()
+        self._render_content()
+        self._render_hops()
         termui.newline()
         curses.addstr(
             f"{constants.CONTENT_PADDING*' '}"
             f"Press [{constants.QUIT_KEY}] to quit"
         )
 
-        self.handle_input()
+        self._handle_input()
 
 
 class PlainTextMenu(Menu):
@@ -112,7 +115,7 @@ class PlainTextMenu(Menu):
         super().__init__(manager, title)
         self.text: str = text
 
-    def render_content(self) -> None:
+    def _render_content(self) -> None:
         curses.addstr(constants.CONTENT_PADDING*" " + self.text + "\n")
         termui.newline()
 
@@ -149,7 +152,7 @@ class ScrollingTextMenu(Menu):
         )
         self.render_lines()
 
-    def extra_input(self, key: str) -> bool:
+    def _extra_input(self, key: str) -> bool:
         if key == constants.SCROLL_UP_KEY:
             self.scroll_up()
         elif key == constants.SCROLL_DOWN_KEY:
@@ -157,7 +160,7 @@ class ScrollingTextMenu(Menu):
 
         return True
 
-    def render_content(self) -> None:
+    def _render_content(self) -> None:
         self.base_line = curses.getyx(termui.stdscr)[0]
         self.render_lines()
         termui.newline()
@@ -186,7 +189,7 @@ class OptionsMenu(Menu):
     def remove_option(self, key: str) -> None:
         del self.options[key]
 
-    def render_content(self) -> None:
+    def _render_content(self) -> None:
         for option in self.options:
             curses.addstr(f"{constants.CONTENT_PADDING*' '}")
             curses.addch("[")
@@ -196,7 +199,7 @@ class OptionsMenu(Menu):
 
         termui.newline()
 
-    def extra_input(self, key: str) -> bool:
+    def _extra_input(self, key: str) -> bool:
         if key in self.options:
             self.options[key].target()
 
@@ -216,7 +219,7 @@ class InputsMenu(Menu):
         self.next_input: int = 0
         self.answers: list[str] = []
 
-    def render_content(self) -> None:
+    def _render_content(self) -> None:
         for idx, input in list(enumerate(self.input_queries)):
             curses.addstr(
                 f"{constants.CONTENT_PADDING*' '}"
@@ -244,7 +247,11 @@ class InputsMenu(Menu):
         )
         termui.newline()
 
-    def extra_input(self, key: str) -> bool:
+    def _cleanup(self) -> None:
+        self.next_input = 0
+        self.answers = []
+
+    def _extra_input(self, key: str) -> bool:
         if self.next_input == len(self.input_queries):
             return True
 
