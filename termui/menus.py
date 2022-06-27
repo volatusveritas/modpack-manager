@@ -1,9 +1,22 @@
 from __future__ import annotations
+from dataclasses import dataclass
 import unicurses as curses
 from typing import Any, Callable
 
 import termui
 from termui import constants
+
+
+@dataclass
+class Hop:
+    description: str
+    target: Menu
+
+
+@dataclass
+class Option:
+    description: str
+    target: Callable
 
 
 class MenuManager:
@@ -24,9 +37,9 @@ class MenuManager:
 
 class Menu:
     def __init__(self, manager: MenuManager, title: str) -> None:
-        self.manager = manager
-        self.title = title.upper()
-        self.hops = {}
+        self.manager: MenuManager = manager
+        self.title: str = title.upper()
+        self.hops: dict[str, Hop] = {}
 
     def add_hop(self, key: str, description: str, target: Menu) -> Menu:
         if key == constants.QUIT_KEY:
@@ -34,13 +47,7 @@ class Menu:
                 f"Can not assign a hop to the quit key ({constants.QUIT_KEY})"
             )
 
-        # TODO: Stop using dictionaries for data handling
-        # do it with dataclasses instead or some proper data structure that can
-        # actually be type checked
-        self.hops[key] = {
-            "description": description,
-            "target": target
-        }
+        self.hops[key] = Hop(description, target)
 
         return self
 
@@ -64,7 +71,7 @@ class Menu:
         for hop in self.hops:
             curses.addstr(constants.CONTENT_PADDING*2*" " + "[")
             curses.addstr(hop, curses.color_pair(termui.SPECIAL_COLOR))
-            curses.addstr("] " + self.hops[hop]["description"])
+            curses.addstr("] " + self.hops[hop].description)
             termui.newline()
 
     def extra_input(self, key: str) -> bool: return True
@@ -76,7 +83,7 @@ class Menu:
             if key == constants.QUIT_KEY:
                 break
             elif key in self.hops:
-                self.manager.queue_menu(self.hops[key]["target"])
+                self.manager.queue_menu(self.hops[key].target)
                 break
             else:
                 if not self.extra_input(key):
@@ -103,7 +110,7 @@ class PlainTextMenu(Menu):
         self, manager: MenuManager, title: str, text: str = ""
     ) -> None:
         super().__init__(manager, title)
-        self.text = text
+        self.text: str = text
 
     def render_content(self) -> None:
         curses.addstr(constants.CONTENT_PADDING*" " + self.text + "\n")
@@ -167,15 +174,12 @@ class OptionsMenu(Menu):
         self, manager: MenuManager, title: str, options: dict = {}
     ) -> None:
         super().__init__(manager, title)
-        self.options: dict = options
+        self.options: dict[str, Option] = options
 
     def add_option(
         self, key: str, description: str, target: Callable
     ) -> OptionsMenu:
-        self.options[key] = {
-            "description": description,
-            "target": target
-        }
+        self.options[key] = Option(description, target)
 
         return self
 
@@ -188,13 +192,13 @@ class OptionsMenu(Menu):
             curses.addch("[")
             curses.addstr(option, curses.color_pair(termui.SPECIAL_COLOR))
             curses.addch("]")
-            curses.addstr(f" {self.options[option]['description']}\n")
+            curses.addstr(f" {self.options[option].description}\n")
 
         termui.newline()
 
     def extra_input(self, key: str) -> bool:
         if key in self.options:
-            self.options[key]["target"]()
+            self.options[key].target()
 
         return True
 
@@ -218,10 +222,16 @@ class InputsMenu(Menu):
                 f"{constants.CONTENT_PADDING*' '}"
                 f"{input} "
             )
-            curses.addch(">", curses.color_pair(termui.STANDOUT_COLOR))
+            curses.addch(
+                constants.PROMPT_DIVISOR,
+                curses.color_pair(termui.STANDOUT_COLOR)
+            )
             curses.addch(" ")
             self.input_positions.append(curses.getyx(termui.stdscr))
-            curses.addstr("(?)", curses.color_pair(termui.STANDOUT_COLOR))
+            curses.addstr(
+                constants.UNPROMPTED_INDICATOR,
+                curses.color_pair(termui.STANDOUT_COLOR)
+            )
             termui.newline()
 
         termui.newline()
@@ -237,8 +247,7 @@ class InputsMenu(Menu):
 
         if key == constants.NEXT_INPUT_KEY:
             curses.move(*self.input_positions[self.next_input])
-            # TODO: Remove the magic number '3'
-            curses.addstr(3*" ")
+            curses.addstr(len(constants.UNPROMPTED_INDICATOR)*" ")
             curses.move(*self.input_positions[self.next_input])
             self.answers.append(termui.input())
             self.next_input += 1
