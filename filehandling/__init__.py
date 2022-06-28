@@ -2,7 +2,7 @@ from io import TextIOWrapper
 import os
 import os.path
 import json
-from uuid import UUID
+from uuid import UUID, uuid4 as random_uuid
 
 from filehandling import constants
 
@@ -20,7 +20,7 @@ def assert_modpack_folder() -> None:
 def new_modpack(name: str, description: str, version: str) -> None:
     assert_modpack_folder()
 
-    identifier: UUID = UUID()
+    identifier: UUID = random_uuid()
     new_modpack_file = open(os.path.join(
         constants.MODPACKS_DIR_PATH, f"{identifier.hex}.json"
     ))
