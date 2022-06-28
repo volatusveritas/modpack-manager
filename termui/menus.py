@@ -264,6 +264,7 @@ class InputsMenu(Menu):
 
             if self.next_input == len(self.input_queries):
                 self.do_when_filled(self.answers)
+                return False
             else:
                 curses.move(*self.input_positions[self.next_input])
                 curses.addstr(
