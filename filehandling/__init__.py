@@ -21,7 +21,7 @@ def new_modpack(name: str, description: str, version: str) -> None:
     assert_modpack_folder()
 
     identifier: UUID = UUID()
-    new_modpack = open(os.path.join(
+    new_modpack_file = open(os.path.join(
         constants.MODPACKS_DIR_PATH, f"{identifier.hex}.json"
     ))
 
@@ -32,9 +32,9 @@ def new_modpack(name: str, description: str, version: str) -> None:
         "mods": []
     }
 
-    json.dump(initial_modpack_content, new_modpack)
+    json.dump(initial_modpack_content, new_modpack_file)
 
-    new_modpack.close()
+    new_modpack_file.close()
 
 
 def open_modpack(identifier: UUID) -> None:
