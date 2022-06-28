@@ -23,7 +23,7 @@ def new_modpack(name: str, description: str, version: str) -> None:
     identifier: UUID = random_uuid()
     new_modpack_file = open(os.path.join(
         constants.MODPACKS_DIR_PATH, f"{identifier.hex}.json"
-    ))
+    ), "x")
 
     initial_modpack_content: dict = {
         "name": name,
