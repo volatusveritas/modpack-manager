@@ -108,7 +108,7 @@ class Menu:
         self._handle_input()
 
 
-class PlainTextMenu(Menu):
+class PlaintextMenu(Menu):
     def __init__(
         self, manager: MenuManager, title: str, text: str = ""
     ) -> None:
