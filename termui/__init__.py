@@ -2,6 +2,8 @@ from ctypes import c_void_p
 from typing import Callable
 import unicurses as curses
 
+import filehandling
+
 
 WIN_TITLE_COLOR = 1
 SEC_TITLE_COLOR = 2
@@ -48,6 +50,8 @@ def wrap_execute(mainfunc: Callable[..., None]) -> None:
     except Exception as e:
         _finalize()
         raise e
+    finally:
+        filehandling.clean_exiting()
 
 
 def newline() -> None:
