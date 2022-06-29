@@ -174,7 +174,8 @@ class ScrollingTextMenu(Menu):
 
 class OptionsMenu(Menu):
     def __init__(
-        self, manager: MenuManager, title: str, options: dict = {}
+        self, manager: MenuManager, title: str,
+        options: dict[str, Option] = {}
     ) -> None:
         super().__init__(manager, title)
         self.options: dict[str, Option] = options
